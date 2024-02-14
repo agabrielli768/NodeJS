@@ -8,16 +8,17 @@ const usersController = require("./api/users/users.controller");
 const authMiddleware = require("./middlewares/auth");
 require("./api/articles/articles.schema"); // temporaire
 const app = express();
+const articleRouter = require("./api/articles/articles.router")
 
 const server = http.createServer(app);
 const io = new Server(server);
 
 io.on("connection", (socket) => {
   console.log("a user connected");
-  /*socket.on("my_event", (data) => {
+  socket.on("my_event", (data) => {
     console.log(data);
   });
-  io.emit("event_from_server", { test: "foo" });*/
+  io.emit("event_from_server", { test: "foo" });
 });
 
 app.use((req, res, next) => {
@@ -29,6 +30,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/users", authMiddleware, userRouter);
+app.use("/api/articles", authMiddleware, articleRouter)
 app.post("/login", usersController.login);
 
 app.use("/", express.static("public"));
